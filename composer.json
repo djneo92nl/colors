@@ -1,0 +1,18 @@
+{
+    "name": "djneo/colorz",
+    "description": "Support Library for Poseiden, calculates Colors",
+    "require": {
+        "primal/color": "^1.0"
+    },
+    "authors": [
+        {
+            "name": "remco janse",
+            "email": "remko@djneo.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "djneo\\": "./"
+        }
+    }
+}
