@@ -4,31 +4,18 @@ namespace djneo;
 
 use Primal\Color;
 
-class colorz {
+class colorz implements \JsonSerializable{
 
 	/**
 	 * @var \Primal\Color\RGBColor
 	 */
-	private $RGBcolorobject;
-
-	/**
-	 * @var \Primal\Color\HSVColor
-	 */
-	private $HSVcolorobject;
-
-	/**
-	 * @var \Primal\Color\HSLColor
-	 */
-	private $HSLcolorobject;
+	private $colorObject;
 
 	/**
 	 * @param null $colorObject
 	 */
 	function __construct ($colorObject = null)
 	{
-
-		$color = new Color\RGBColor();
-
 		if (is_array($colorObject)){
 			if (isset($colorObject['type'])){
 				switch (strtolower($colorObject['type'])){
@@ -44,6 +31,10 @@ class colorz {
 						$color = new Color\RGBColor($colorObject['r'],
 							$colorObject['g'], $colorObject['b'], $colorObject['a']);
 						break;
+					case 'hex':
+						list($r, $g, $b) = sscanf($colorObject['hex'], "%02x%02x%02x");
+						$color = new Color\RGBColor($r, $g, $b, 1);
+						break;
 					default:
 						$color = new Color\RGBColor();
 						break;
@@ -51,12 +42,7 @@ class colorz {
 			}
 		}
 
-		$this->RGBcolorobject = $color->toRGB();
-		$this->HSVcolorobject = $color->toHSV();
-		$this->HSLcolorobject = $color->toHSL();
-
-
-
+		$this->colorObject = $color;
 	}
 
 
@@ -65,8 +51,7 @@ class colorz {
 	 */
 	public function getHue()
 	{
-		//var_dump($this);
-		return (int) $this->HSVcolorobject->hue;
+		return (int) $this->colorObject->toHSV()->hue;
 	}
 
 	/**
@@ -74,18 +59,65 @@ class colorz {
 	 */
 	public function getSaturation()
 	{
-		return (int) $this->HSVcolorobject->saturation;
+		return (int) $this->colorObject->toHSV()->saturation;
+	}
+
+	public function getValue()
+	{
+		return (int) $this->colorObject->toHSV()->value;
+	}
+
+	public function getLuminance()
+	{
+		return  $this->colorObject->toHSL()->luminance;
 	}
 
 	public function getCSS()
 	{
-		return $this->RGBcolorobject->toCSS();
+		return $this->colorObject->toRGB()->toCSS();
 	}
 	public function getHex()
 	{
-		return $this->RGBcolorobject->toHex();
+		return $this->colorObject->toRGB()->toHex();
 	}
 
+	public function toArray()
+	{
+		return ['color' => [
+				'hex' => $this->getHex(),
+	 			'css' => $this->getCSS(),
+	 			'hsv' => [
+	 				'h' => $this->getHue(),
+	 				's' => $this->getSaturation(),
+	 				'v' => $this->getValue()	
+	 			],
+	 			'hsl' => [
+	 				'h' => $this->colorObject->toHSL()->hue,
+	 				's' =>  $this->colorObject->toHSL()->saturation,
+	 				'l' => $this->getLuminance()	
+	 			]
+			]
+		];
+	}
+
+	public function jsonSerialize()
+	{
+        return $this->toArray();
+	}
+
+
+	//Color change functions
+	public function getComplementaryColor()
+	{
+
+	}
+
+	public function hexToRgb($hex)
+	{
+		list($r, $g, $b) = sscanf($hex, "%02x%02x%02x");
+		return ['r' => $r, 'g' => $g, 'b' => $b];
+	}
+	
 
 
 }
