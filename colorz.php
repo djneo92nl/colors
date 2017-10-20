@@ -16,30 +16,29 @@ class colorz implements \JsonSerializable{
 	 */
 	function __construct ($colorObject = null)
 	{
-		if (is_array($colorObject)){
-			if (isset($colorObject['type'])){
-				switch (strtolower($colorObject['type'])){
-					case 'hsv':
-						$color = new Color\HSVColor($colorObject['h'],
-							$colorObject['s'], $colorObject['v'], $colorObject['a']);
-						break;
-					case 'hsl':
-						$color = new Color\HSLColor($colorObject['h'],
-							$colorObject['s'], $colorObject['l'], $colorObject['a']);
-						break;
-					case 'rgb':
-						$color = new Color\RGBColor($colorObject['r'],
-							$colorObject['g'], $colorObject['b'], $colorObject['a']);
-						break;
-					case 'hex':
-						list($r, $g, $b) = sscanf($colorObject['hex'], "%02x%02x%02x");
-						$color = new Color\RGBColor($r, $g, $b, 1);
-						break;
-					default:
-						$color = new Color\RGBColor();
-						break;
-				}
+		if (is_array($colorObject) && isset($colorObject['type'])){
+			switch (strtolower($colorObject['type'])){
+				case 'hsv':
+					$color = new Color\HSVColor($colorObject['h'],
+						$colorObject['s'], $colorObject['v'], $colorObject['a']);
+					break;
+				case 'hsl':
+					$color = new Color\HSLColor($colorObject['h'],
+						$colorObject['s'], $colorObject['l'], $colorObject['a']);
+					break;
+				case 'rgb':
+					$color = new Color\RGBColor($colorObject['r'],
+						$colorObject['g'], $colorObject['b'], $colorObject['a']);
+					break;
+				case 'hex':
+					list($r, $g, $b) = sscanf($colorObject['hex'], "%02x%02x%02x");
+					$color = new Color\RGBColor($r, $g, $b, 1);
+					break;
+				default:
+					$color = new Color\RGBColor();
+					break;
 			}
+		
 		}
 
 		$this->colorObject = $color;
