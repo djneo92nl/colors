@@ -12,6 +12,7 @@ class colorz implements \JsonSerializable{
 	private $colorObject;
 
 	/**
+     * ['type' => 'hsl', 'h' => rand(0,360), 's' =>'100', 'l' => rand(40,60), 'a' => 1 ]
 	 * @param null $colorObject
 	 */
 	function __construct ($colorObject = null)
@@ -109,6 +110,16 @@ class colorz implements \JsonSerializable{
 	public function getComplementaryColor()
 	{
 
+	    $Hue = $this->colorObject->toHSL()->hue;
+	    $InvertedHue = abs(($Hue - 180));
+
+	    return new colorz([
+	        'type' => 'hsl',
+            'h' => $InvertedHue,
+            's' => $this->colorObject->toHSL()->saturation,
+            'l' => $this->getLuminance(),
+            'a' => 1
+        ]);
 	}
 
 	public function hexToRgb($hex)
